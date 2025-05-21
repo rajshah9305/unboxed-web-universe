@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Pencil, Check } from "lucide-react";
 
 interface KnowledgeStarProps {
   id: string;
@@ -16,6 +17,7 @@ interface KnowledgeStarProps {
   color: "yellow" | "pink" | "cyan";
   title: string;
   content: string;
+  onUpdate?: (id: string, title: string, content: string) => void;
 }
 
 const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
@@ -25,8 +27,12 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
   color,
   title,
   content,
+  onUpdate,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableTitle, setEditableTitle] = useState(title);
+  const [editableContent, setEditableContent] = useState(content);
   const isMobile = useIsMobile();
   const timerRef = useRef<number | null>(null);
   
@@ -39,9 +45,9 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
     };
   }, []);
 
-  // Set a timer when the popup is expanded
+  // Set a timer when the popup is expanded and not being edited
   useEffect(() => {
-    if (isExpanded) {
+    if (isExpanded && !isEditing) {
       // Close the popup after 10 seconds
       timerRef.current = window.setTimeout(() => {
         setIsExpanded(false);
@@ -53,21 +59,30 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
         }
       };
     }
-  }, [isExpanded]);
+  }, [isExpanded, isEditing]);
   
   const handleStarClick = () => {
-    setIsExpanded(!isExpanded);
-    
-    // Clear any existing timer when manually toggling
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
+    if (!isEditing) {
+      setIsExpanded(!isExpanded);
+      
+      // Clear any existing timer when manually toggling
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     }
   };
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(false);
+    setIsEditing(false);
+    
+    // Reset to original content if editing was canceled
+    if (isEditing) {
+      setEditableTitle(title);
+      setEditableContent(content);
+    }
     
     // Clear the timer when manually closing
     if (timerRef.current) {
@@ -76,10 +91,44 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
     }
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    
+    // Clear timer when editing starts
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(false);
+    
+    // Call parent update function with new content
+    if (onUpdate) {
+      onUpdate(id, editableTitle, editableContent);
+    }
+    
+    // Restart the auto-close timer after saving
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = window.setTimeout(() => {
+      setIsExpanded(false);
+    }, 10000);
+  };
+
   const colorClasses = {
     yellow: "bg-cosmic-yellow before:shadow-cosmic-yellow/40",
     pink: "bg-cosmic-pink before:shadow-cosmic-pink/40",
     cyan: "bg-cosmic-cyan before:shadow-cosmic-cyan/40",
+  };
+
+  // Prevent popup clicks from closing it
+  const handlePopupClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -90,7 +139,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
         ...position,
       }}
       className={cn(
-        "knowledge-star star-glow",
+        "knowledge-star star-glow absolute",
         colorClasses[color],
         isExpanded ? "z-50" : ""
       )}
@@ -99,7 +148,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
     >
       {isExpanded && (
         <div
-          onClick={(e) => e.stopPropagation()}
+          onClick={handlePopupClick}
           className={cn(
             "absolute w-72 md:w-96 bg-muted/90 backdrop-blur-md rounded-lg p-4 shadow-lg",
             "transform transition-all duration-500 animate-fade-in",
@@ -110,16 +159,60 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
               color === 'pink' ? '217, 70, 239' : '14, 165, 233'}, 0.3)`,
           }}
         >
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute right-2 top-2 h-6 w-6 rounded-full p-0"
-            onClick={handleClose}
-          >
-            ×
-          </Button>
-          <h3 className="text-lg font-bold mb-2">{title}</h3>
-          <p className="text-sm text-foreground/80">{content}</p>
+          <div className="flex justify-between items-center mb-2">
+            {isEditing ? (
+              <input
+                type="text"
+                value={editableTitle}
+                onChange={(e) => setEditableTitle(e.target.value)}
+                className="text-lg font-bold bg-background/50 border border-primary/30 rounded px-2 py-1 w-full mr-2"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <h3 className="text-lg font-bold">{editableTitle}</h3>
+            )}
+            
+            <div className="flex gap-2">
+              {isEditing ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 rounded-full p-0 bg-primary/20 hover:bg-primary/30"
+                  onClick={handleSave}
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 rounded-full p-0 bg-muted hover:bg-muted/80"
+                  onClick={handleEdit}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 rounded-full p-0"
+                onClick={handleClose}
+              >
+                ×
+              </Button>
+            </div>
+          </div>
+          
+          {isEditing ? (
+            <textarea
+              value={editableContent}
+              onChange={(e) => setEditableContent(e.target.value)}
+              className="text-sm text-foreground/80 bg-background/50 border border-primary/30 rounded px-2 py-1 w-full min-h-[100px]"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <p className="text-sm text-foreground/80">{editableContent}</p>
+          )}
         </div>
       )}
     </div>
