@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -28,14 +28,52 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const timerRef = useRef<number | null>(null);
+  
+  // Clear the timer when component unmounts or when popup is closed
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  // Set a timer when the popup is expanded
+  useEffect(() => {
+    if (isExpanded) {
+      // Close the popup after 10 seconds
+      timerRef.current = window.setTimeout(() => {
+        setIsExpanded(false);
+      }, 10000); // 10 seconds
+      
+      return () => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
+      };
+    }
+  }, [isExpanded]);
   
   const handleStarClick = () => {
     setIsExpanded(!isExpanded);
+    
+    // Clear any existing timer when manually toggling
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   };
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(false);
+    
+    // Clear the timer when manually closing
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   };
 
   const colorClasses = {
