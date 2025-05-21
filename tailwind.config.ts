@@ -64,11 +64,11 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
                 cosmic: {
-                    darkblue: '#0B0E2D',
+                    'dark-blue': '#0B0E2D', // Renamed for consistency
                     purple: '#2E1065',
-                    pink: '#D946EF',
-                    cyan: '#0EA5E9',
-                    yellow: '#FEF08A'
+                    pink: '#D946EF', // hsl(var(--cosmic-pink-hsl)) -> If we want to use HSL from CSS vars
+                    cyan: '#0EA5E9',   // hsl(var(--cosmic-cyan-hsl))
+                    yellow: '#FEF08A' // hsl(var(--cosmic-yellow-hsl))
                 }
 			},
 			borderRadius: {

@@ -1,10 +1,18 @@
 
-import React, { useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Header: React.FC = () => {
-  const [isInfoVisible, setIsInfoVisible] = useState(false);
   const isMobile = useIsMobile();
 
   return (
@@ -12,41 +20,60 @@ const Header: React.FC = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center">
           <div className="flex flex-col">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cosmic-pink to-cosmic-cyan">
+            <motion.h1
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-2xl md:text-3xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cosmic-pink to-cosmic-cyan"
+            >
               Knowledge Galaxy
-            </h1>
-            <p className="text-xs md:text-sm text-muted-foreground">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-xs md:text-sm text-muted-foreground"
+            >
               Explore the universe of ideas
-            </p>
+            </motion.p>
           </div>
         </div>
         
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size={isMobile ? "sm" : "default"}
-            className="bg-muted/30 backdrop-blur-sm border-muted"
-            onClick={() => setIsInfoVisible(!isInfoVisible)}
-          >
-            {isInfoVisible ? "Hide Info" : "How to Use"}
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size={isMobile ? "sm" : "default"}
+                className="bg-muted/30 backdrop-blur-sm border-cosmic-pink"
+              >
+                How to Use
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-muted/80 backdrop-blur-md border-cosmic-cyan text-white max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cosmic-pink to-cosmic-cyan">
+                  How to Navigate the Galaxy
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Follow these instructions to explore the universe of ideas.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-4 text-sm">
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Click and drag to move around the galaxy</li>
+                  <li>Use mouse wheel or buttons to zoom in/out</li>
+                  <li>Click on glowing stars to reveal knowledge</li>
+                  <li>Click the reset button (↺) to return to the center</li>
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground/80">
+                  Each star contains a unique piece of knowledge. Explore and learn!
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-      
-      {isInfoVisible && (
-        <div className="mt-4 bg-muted/60 backdrop-blur-md p-4 rounded-lg shadow-lg max-w-2xl mx-auto animate-fade-in">
-          <h2 className="text-lg font-semibold mb-2">How to Navigate:</h2>
-          <ul className="list-disc pl-5 text-sm space-y-1">
-            <li>Click and drag to move around the galaxy</li>
-            <li>Use mouse wheel or buttons to zoom in/out</li>
-            <li>Click on glowing stars to reveal knowledge</li>
-            <li>Click the reset button (↺) to return to the center</li>
-          </ul>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Each star contains a unique piece of knowledge. Explore and learn!
-          </p>
-        </div>
-      )}
     </div>
   );
 };

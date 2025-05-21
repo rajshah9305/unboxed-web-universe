@@ -9,6 +9,8 @@ interface Particle {
   speedY: number;
   color: string;
   opacity: number;
+  baseOpacity: number;
+  twinkleSpeed: number;
 }
 
 const ParticleBackground: React.FC = () => {
@@ -35,25 +37,30 @@ const ParticleBackground: React.FC = () => {
     
     // Create particles
     const createParticles = () => {
-      const particleCount = Math.min(window.innerWidth / 3, 250); // Responsive count
+      const particleCount = Math.min(window.innerWidth / 2.5, 350); // Increased particle count
       const particles: Particle[] = [];
       
       const colors = [
         'rgba(254, 240, 138, 0.7)', // yellow
         'rgba(217, 70, 239, 0.7)',  // pink
         'rgba(14, 165, 233, 0.7)',  // cyan
-        'rgba(255, 255, 255, 0.7)'  // white
+        'rgba(255, 255, 255, 0.7)',  // white
+        'rgba(76, 109, 217, 0.7)',  // deep blue
+        'rgba(118, 76, 217, 0.7)'   // muted purple
       ];
       
       for (let i = 0; i < particleCount; i++) {
+        const baseOpacity = Math.random() * 0.5 + 0.2;
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           size: Math.random() * 2 + 0.1,
-          speedX: (Math.random() - 0.5) * 0.3,
-          speedY: (Math.random() - 0.5) * 0.3,
+          speedX: (Math.random() - 0.5) * 0.5, // Increased speed variability
+          speedY: (Math.random() - 0.5) * 0.5, // Increased speed variability
           color: colors[Math.floor(Math.random() * colors.length)],
-          opacity: Math.random() * 0.5 + 0.2
+          opacity: baseOpacity,
+          baseOpacity: baseOpacity,
+          twinkleSpeed: Math.random() * 0.05 + 0.01 // Random speed for twinkle
         });
       }
       
@@ -86,7 +93,7 @@ const ParticleBackground: React.FC = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // Update and draw particles
-      particlesRef.current.forEach((particle, i) => {
+      particlesRef.current.forEach((particle) => {
         // Update position
         particle.x += particle.speedX;
         particle.y += particle.speedY;
@@ -120,10 +127,16 @@ const ParticleBackground: React.FC = () => {
           }
         }
         
+        // Twinkle effect
+        // Cycle opacity using a sine wave for smooth transition
+        particle.opacity = particle.baseOpacity * (0.5 + 0.5 * Math.sin(Date.now() * particle.twinkleSpeed));
+
         // Draw particle
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color;
+        // Apply current opacity to the particle's color
+        const originalColor = particle.color.substring(particle.color.indexOf('(') + 1, particle.color.lastIndexOf(')')).split(',');
+        ctx.fillStyle = `rgba(${originalColor[0]}, ${originalColor[1]}, ${originalColor[2]}, ${particle.opacity})`;
         ctx.closePath();
         ctx.fill();
       });
