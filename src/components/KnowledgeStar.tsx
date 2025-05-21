@@ -1,9 +1,9 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Pencil, Check } from "lucide-react";
+import { useKnowledgeStar } from "@/context/KnowledgeStarContext";
 
 interface KnowledgeStarProps {
   id: string;
@@ -29,14 +29,17 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
   content,
   onUpdate,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { activeStarId, setActiveStarId } = useKnowledgeStar();
   const [isEditing, setIsEditing] = useState(false);
   const [editableTitle, setEditableTitle] = useState(title);
   const [editableContent, setEditableContent] = useState(content);
   const isMobile = useIsMobile();
   const timerRef = useRef<number | null>(null);
   
-  // Clear the timer when component unmounts or when popup is closed
+  // Determine if this star is expanded based on the active star ID
+  const isExpanded = activeStarId === id;
+  
+  // Clear the timer when component unmounts
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -50,7 +53,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
     if (isExpanded && !isEditing) {
       // Close the popup after 10 seconds
       timerRef.current = window.setTimeout(() => {
-        setIsExpanded(false);
+        setActiveStarId(null);
       }, 10000); // 10 seconds
       
       return () => {
@@ -59,11 +62,13 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
         }
       };
     }
-  }, [isExpanded, isEditing]);
+  }, [isExpanded, isEditing, setActiveStarId]);
   
   const handleStarClick = () => {
     if (!isEditing) {
-      setIsExpanded(!isExpanded);
+      // If this star is already expanded, close it
+      // Otherwise, set this star as the active one (which will close any other open ones)
+      setActiveStarId(isExpanded ? null : id);
       
       // Clear any existing timer when manually toggling
       if (timerRef.current) {
@@ -75,7 +80,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsExpanded(false);
+    setActiveStarId(null);
     setIsEditing(false);
     
     // Reset to original content if editing was canceled
@@ -116,7 +121,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
       clearTimeout(timerRef.current);
     }
     timerRef.current = window.setTimeout(() => {
-      setIsExpanded(false);
+      setActiveStarId(null);
     }, 10000);
   };
 

@@ -1,10 +1,10 @@
-
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import KnowledgeStar from "./KnowledgeStar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { KnowledgeStarProvider } from "@/context/KnowledgeStarContext";
 
 // Improved star placement for better visual distribution
 const initialKnowledgeStars = [
@@ -148,110 +148,112 @@ const GalaxyViewer = () => {
   };
   
   return (
-    <div 
-      className="relative h-full w-full overflow-hidden cursor-move"
-      ref={galaxyRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
-      {/* Galaxy visualization */}
-      <motion.div
-        className="absolute w-full h-full galaxy-gradient"
-        style={{
-          scale,
-          translateX: position.x,
-          translateY: position.y,
-        }}
+    <KnowledgeStarProvider>
+      <div 
+        className="relative h-full w-full overflow-hidden cursor-move"
+        ref={galaxyRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
-        {/* Central glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-cosmic-pink/10 animate-pulse-glow star-glow-pink"></div>
-        
-        {/* Constellation lines - enhanced for better visual appeal */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Primary constellation */}
-          <path 
-            d="M20,15 L68,28 L25,75 L82,42 L68,28" 
-            stroke="rgba(217, 70, 239, 0.3)" 
-            strokeWidth="0.1" 
-            fill="none"
-          />
-          {/* Secondary constellation */}
-          <path 
-            d="M20,15 L15,82 L82,42 L20,15" 
-            stroke="rgba(14, 165, 233, 0.2)" 
-            strokeWidth="0.1" 
-            fill="none"
-          />
-          {/* Tertiary constellation */}
-          <path 
-            d="M85,15 L68,28 L85,85 L25,75" 
-            stroke="rgba(254, 240, 138, 0.2)" 
-            strokeWidth="0.1" 
-            fill="none"
-          />
-        </svg>
-        
-        {/* Knowledge stars */}
-        {knowledgeStars.map((star) => (
-          <KnowledgeStar
-            key={star.id}
-            id={star.id}
-            size={star.size}
-            position={star.position}
-            color={star.color}
-            title={star.title}
-            content={star.content}
-            onUpdate={handleStarUpdate}
-          />
-        ))}
-        
-        {/* Visual particles for cosmic atmosphere */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div 
-            key={`particle-${i}`}
-            className={`absolute rounded-full bg-white/20 animate-pulse-glow`}
-            style={{
-              width: `${Math.random() * 4 + 1}px`,
-              height: `${Math.random() * 4 + 1}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${Math.random() * 4 + 2}s`,
-            }}
-          />
-        ))}
-      </motion.div>
-      
-      {/* Controls */}
-      <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
-        <Button
-          onClick={() => handleZoom(true)}
-          variant="outline"
-          size="icon"
-          className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+        {/* Galaxy visualization */}
+        <motion.div
+          className="absolute w-full h-full galaxy-gradient"
+          style={{
+            scale,
+            translateX: position.x,
+            translateY: position.y,
+          }}
         >
-          +
-        </Button>
-        <Button
-          onClick={() => handleZoom(false)}
-          variant="outline"
-          size="icon"
-          className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
-        >
-          -
-        </Button>
-        <Button
-          onClick={resetView}
-          variant="outline"
-          size="icon"
-          className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
-        >
-          ↺
-        </Button>
+          {/* Central glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-cosmic-pink/10 animate-pulse-glow star-glow-pink"></div>
+          
+          {/* Constellation lines - enhanced for better visual appeal */}
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* Primary constellation */}
+            <path 
+              d="M20,15 L68,28 L25,75 L82,42 L68,28" 
+              stroke="rgba(217, 70, 239, 0.3)" 
+              strokeWidth="0.1" 
+              fill="none"
+            />
+            {/* Secondary constellation */}
+            <path 
+              d="M20,15 L15,82 L82,42 L20,15" 
+              stroke="rgba(14, 165, 233, 0.2)" 
+              strokeWidth="0.1" 
+              fill="none"
+            />
+            {/* Tertiary constellation */}
+            <path 
+              d="M85,15 L68,28 L85,85 L25,75" 
+              stroke="rgba(254, 240, 138, 0.2)" 
+              strokeWidth="0.1" 
+              fill="none"
+            />
+          </svg>
+          
+          {/* Knowledge stars */}
+          {knowledgeStars.map((star) => (
+            <KnowledgeStar
+              key={star.id}
+              id={star.id}
+              size={star.size}
+              position={star.position}
+              color={star.color}
+              title={star.title}
+              content={star.content}
+              onUpdate={handleStarUpdate}
+            />
+          ))}
+          
+          {/* Visual particles for cosmic atmosphere */}
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div 
+              key={`particle-${i}`}
+              className={`absolute rounded-full bg-white/20 animate-pulse-glow`}
+              style={{
+                width: `${Math.random() * 4 + 1}px`,
+                height: `${Math.random() * 4 + 1}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${Math.random() * 4 + 2}s`,
+              }}
+            />
+          ))}
+        </motion.div>
+        
+        {/* Controls */}
+        <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
+          <Button
+            onClick={() => handleZoom(true)}
+            variant="outline"
+            size="icon"
+            className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+          >
+            +
+          </Button>
+          <Button
+            onClick={() => handleZoom(false)}
+            variant="outline"
+            size="icon"
+            className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+          >
+            -
+          </Button>
+          <Button
+            onClick={resetView}
+            variant="outline"
+            size="icon"
+            className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+          >
+            ↺
+          </Button>
+        </div>
       </div>
-    </div>
+    </KnowledgeStarProvider>
   );
 };
 
