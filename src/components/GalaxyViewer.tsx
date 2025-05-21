@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import KnowledgeStar from "./KnowledgeStar";
@@ -6,63 +7,63 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { KnowledgeStarProvider } from "@/context/KnowledgeStarContext";
 
-// Improved star placement for better visual distribution
+// Enhanced knowledge stars with more realistic astronomy-themed content
 const initialKnowledgeStars = [
   {
     id: "star1",
-    size: 20,
+    size: 18,
     position: { top: "15%", left: "20%" },
     color: "yellow" as const,
-    title: "Quantum Computing",
-    content: "Quantum computers use quantum bits or 'qubits' which can exist in multiple states simultaneously, potentially solving complex problems exponentially faster than classical computers."
+    title: "Supernova Remnants",
+    content: "When massive stars end their lives in spectacular explosions called supernovae, they leave behind beautiful nebulae of gas and dust. The Crab Nebula is one of the most famous examples, formed from a supernova observed by Chinese astronomers in 1054 CE."
   },
   {
     id: "star2",
     size: 16,
-    position: { top: "28%", left: "68%" },
+    position: { top: "35%", left: "78%" },
     color: "pink" as const,
-    title: "Deep Ocean Discoveries",
-    content: "More than 80% of the ocean remains unexplored. Scientists estimate there could be millions of undiscovered species living in the deep ocean trenches."
+    title: "Black Hole at M87",
+    content: "In April 2019, the Event Horizon Telescope collaboration revealed the first-ever image of a black hole's shadow. This supermassive black hole sits at the center of galaxy M87, about 55 million light-years from Earth, and has a mass approximately 6.5 billion times that of our Sun."
   },
   {
     id: "star3",
-    size: 18,
-    position: { top: "75%", left: "25%" },
+    size: 20,
+    position: { top: "65%", left: "25%" },
     color: "cyan" as const,
-    title: "Neural Networks",
-    content: "Inspired by the human brain, neural networks learn to recognize patterns in data, forming the foundation of modern artificial intelligence and machine learning."
+    title: "Stellar Nebulae",
+    content: "Nebulae are vast clouds of gas and dust in space. Some, like the famous Orion Nebula, are stellar nurseries where new stars are born. Others, like the Helix Nebula, are formed by dying stars shedding their outer layers."
   },
   {
     id: "star4",
     size: 22,
-    position: { top: "42%", left: "82%" },
+    position: { top: "42%", left: "45%" },
     color: "yellow" as const,
-    title: "Renewable Energy",
-    content: "Solar panels only convert about 15-22% of sunlight into electricity. Researchers are developing materials that could potentially double this efficiency."
+    title: "Exoplanet Discoveries",
+    content: "NASA's TESS mission is discovering thousands of exoplanets around nearby stars. Some of these planets orbit in their star's habitable zone, where liquid water could exist. The nearest potentially habitable exoplanet, Proxima Centauri b, is just over 4 light-years away."
   },
   {
     id: "star5",
     size: 17,
-    position: { top: "18%", right: "15%" },
+    position: { top: "22%", right: "25%" },
     color: "cyan" as const,
-    title: "Exoplanets",
-    content: "Scientists have discovered over 5,000 planets outside our solar system. Some, called 'super-Earths,' have conditions potentially suitable for supporting life."
+    title: "Cosmic Microwave Background",
+    content: "The Cosmic Microwave Background (CMB) is the afterglow of the Big Bang, detected as faint radiation permeating all of space. First discovered accidentally in 1965, detailed measurements of the CMB by satellites like WMAP and Planck have helped cosmologists determine the age and composition of the universe."
   },
   {
     id: "star6",
     size: 19,
-    position: { bottom: "22%", right: "28%" },
+    position: { bottom: "28%", right: "18%" },
     color: "pink" as const,
-    title: "Biotechnology",
-    content: "CRISPR gene editing technology allows scientists to precisely modify DNA sequences, offering potential treatments for genetic diseases and improvements in agriculture."
+    title: "Dark Matter",
+    content: "Dark matter makes up about 85% of the total matter in the universe but doesn't interact with light. Its existence is inferred from its gravitational effects on visible matter, like the rotation curves of galaxies and gravitational lensing. Scientists are still trying to detect dark matter particles directly."
   },
   {
     id: "star7",
-    size: 17,
-    position: { bottom: "12%", left: "15%" },
+    size: 16,
+    position: { bottom: "18%", left: "35%" },
     color: "yellow" as const,
-    title: "Black Holes",
-    content: "At the center of most galaxies lies a supermassive black hole. The one in our Milky Way, Sagittarius A*, is 4 million times the mass of our Sun."
+    title: "Stellar Evolution",
+    content: "Stars follow predictable life cycles based on their mass. Our Sun, a medium-mass star, will eventually become a red giant before shedding its outer layers to form a planetary nebula, leaving behind a white dwarf. More massive stars may end their lives as supernovae, potentially becoming neutron stars or black holes."
   },
 ];
 
@@ -143,21 +144,58 @@ const GalaxyViewer = () => {
     
     toast({
       title: "Star Updated",
-      description: `Changes to "${title}" have been saved.`,
+      description: `Your changes to "${title}" have been saved.`,
     });
+  };
+  
+  // Generate random background stars
+  const generateBackgroundStars = () => {
+    const stars = [];
+    const starClasses = ["star-tiny", "star-small", "star-medium", "star-large"];
+    const starColors = ["bg-white", "bg-yellow-100", "bg-blue-100"];
+    
+    // Generate 300+ stars for a realistic night sky
+    for (let i = 0; i < 300; i++) {
+      const size = starClasses[Math.floor(Math.random() * starClasses.length)];
+      const color = starColors[Math.floor(Math.random() * starColors.length)];
+      const animationDelay = `${Math.random() * 5}s`;
+      const animationDuration = `${Math.random() * 3 + 2}s`;
+      
+      stars.push(
+        <div
+          key={`bg-star-${i}`}
+          className={`absolute rounded-full ${size} ${color} opacity-70`}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationName: 'twinkle',
+            animationDuration,
+            animationDelay,
+            animationIterationCount: 'infinite'
+          }}
+        />
+      );
+    }
+    
+    return stars;
   };
   
   return (
     <KnowledgeStarProvider>
       <div 
-        className="relative h-full w-full overflow-hidden cursor-move"
+        className="relative h-full w-full overflow-hidden cursor-move bg-[#0a0d1f]"
         ref={galaxyRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        {/* Galaxy visualization */}
+        {/* Static background stars that don't move with panning */}
+        <div className="absolute inset-0 overflow-hidden">
+          {generateBackgroundStars()}
+        </div>
+        
+        {/* Galaxy visualization that moves with panning */}
         <motion.div
           className="absolute w-full h-full galaxy-gradient"
           style={{
@@ -166,30 +204,31 @@ const GalaxyViewer = () => {
             translateY: position.y,
           }}
         >
-          {/* Central glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-cosmic-pink/10 animate-pulse-glow star-glow-pink"></div>
+          {/* Distant nebula effect */}
+          <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-purple-900/10 blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full bg-blue-900/10 blur-3xl"></div>
           
-          {/* Constellation lines - enhanced for better visual appeal */}
+          {/* Constellation lines */}
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Primary constellation */}
             <path 
               d="M20,15 L68,28 L25,75 L82,42 L68,28" 
-              stroke="rgba(217, 70, 239, 0.3)" 
-              strokeWidth="0.1" 
+              stroke="rgba(255, 255, 255, 0.15)" 
+              strokeWidth="0.15" 
               fill="none"
             />
             {/* Secondary constellation */}
             <path 
               d="M20,15 L15,82 L82,42 L20,15" 
-              stroke="rgba(14, 165, 233, 0.2)" 
-              strokeWidth="0.1" 
+              stroke="rgba(255, 255, 255, 0.1)" 
+              strokeWidth="0.15" 
               fill="none"
             />
             {/* Tertiary constellation */}
             <path 
               d="M85,15 L68,28 L85,85 L25,75" 
-              stroke="rgba(254, 240, 138, 0.2)" 
-              strokeWidth="0.1" 
+              stroke="rgba(255, 255, 255, 0.08)" 
+              strokeWidth="0.15" 
               fill="none"
             />
           </svg>
@@ -208,30 +247,19 @@ const GalaxyViewer = () => {
             />
           ))}
           
-          {/* Visual particles for cosmic atmosphere */}
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div 
-              key={`particle-${i}`}
-              className={`absolute rounded-full bg-white/20 animate-pulse-glow`}
-              style={{
-                width: `${Math.random() * 4 + 1}px`,
-                height: `${Math.random() * 4 + 1}px`,
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${Math.random() * 4 + 2}s`,
-              }}
-            />
-          ))}
+          {/* Dust clouds for nebula effect */}
+          <div className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-purple-500/5 blur-3xl"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-blue-500/5 blur-3xl"></div>
+          <div className="absolute top-2/3 left-2/3 w-40 h-40 rounded-full bg-pink-500/5 blur-3xl"></div>
         </motion.div>
         
         {/* Controls */}
-        <div className="absolute bottom-4 right-4 flex flex-col space-y-2">
+        <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-50">
           <Button
             onClick={() => handleZoom(true)}
             variant="outline"
             size="icon"
-            className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+            className="bg-muted/20 backdrop-blur-sm border-white/10 hover:bg-muted/40 transition-colors text-white"
           >
             +
           </Button>
@@ -239,7 +267,7 @@ const GalaxyViewer = () => {
             onClick={() => handleZoom(false)}
             variant="outline"
             size="icon"
-            className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+            className="bg-muted/20 backdrop-blur-sm border-white/10 hover:bg-muted/40 transition-colors text-white"
           >
             -
           </Button>
@@ -247,7 +275,7 @@ const GalaxyViewer = () => {
             onClick={resetView}
             variant="outline"
             size="icon"
-            className="bg-muted/30 backdrop-blur-sm border-muted hover:bg-muted/40 transition-colors"
+            className="bg-muted/20 backdrop-blur-sm border-white/10 hover:bg-muted/40 transition-colors text-white"
           >
             ↺
           </Button>

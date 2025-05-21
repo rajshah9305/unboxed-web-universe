@@ -46,7 +46,7 @@
   }
 
   .galaxy-gradient {
-    background: radial-gradient(circle at center, rgba(217, 70, 239, 0.15), rgba(14, 165, 233, 0.05), transparent 70%);
+    background: radial-gradient(circle at center, rgba(54, 63, 95, 0.6), rgba(27, 32, 48, 0.8), rgba(16, 19, 29, 1));
   }
 }
 
@@ -62,27 +62,69 @@
     @apply before:content-[''] before:absolute before:inset-0 
            before:rounded-full before:shadow-[0_0_15px_3px] 
            before:animate-pulse-glow;
+    position: relative;
+    z-index: 10;
   }
 
   .star-glow-yellow {
-    @apply before:shadow-cosmic-yellow/40;
+    @apply before:shadow-cosmic-yellow/70;
   }
 
   .star-glow-pink {
-    @apply before:shadow-cosmic-pink/40;
+    @apply before:shadow-cosmic-pink/70;
   }
 
   .star-glow-cyan {
-    @apply before:shadow-cosmic-cyan/40;
+    @apply before:shadow-cosmic-cyan/70;
   }
   
-  /* New animations for editable elements */
+  /* Enhanced popup styling */
+  .star-popup {
+    @apply backdrop-blur-md rounded-lg p-4 transition-all duration-500;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .star-popup-yellow {
+    background: linear-gradient(135deg, rgba(254, 240, 138, 0.2) 0%, rgba(250, 240, 137, 0.1) 100%);
+  }
+  
+  .star-popup-pink {
+    background: linear-gradient(135deg, rgba(217, 70, 239, 0.2) 0%, rgba(214, 70, 236, 0.1) 100%);
+  }
+  
+  .star-popup-cyan {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(14, 160, 230, 0.1) 100%);
+  }
+  
+  /* Edit transition */
   .edit-transition {
     @apply transition-all duration-300 ease-in-out;
   }
   
   .edit-focus {
     @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-background/50;
+  }
+  
+  /* Star sizes for twinkling effect */
+  .star-tiny {
+    width: 1px;
+    height: 1px;
+  }
+  
+  .star-small {
+    width: 2px;
+    height: 2px;
+  }
+  
+  .star-medium {
+    width: 3px;
+    height: 3px;
+  }
+  
+  .star-large {
+    width: 4px;
+    height: 4px;
   }
 }
 
@@ -115,4 +157,10 @@
   100% {
     box-shadow: 0 0 5px 2px rgba(217, 70, 239, 0.7);
   }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
 }

@@ -108,6 +108,11 @@ export default {
                 'fade-in': {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '1' },
+                },
+                'twinkle': {
+                    '0%': { opacity: '0.4' },
+                    '50%': { opacity: '1' },
+                    '100%': { opacity: '0.4' },
                 }
 			},
 			animation: {
@@ -117,6 +122,7 @@ export default {
                 'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
                 'spin-slow': 'spin-slow 20s linear infinite',
                 'fade-in': 'fade-in 0.5s ease-out',
+                'twinkle': 'twinkle 4s ease-in-out infinite',
 			}
 		}
 	},

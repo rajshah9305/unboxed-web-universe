@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -125,10 +126,17 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
     }, 10000);
   };
 
+  // Define star colors and glow effects based on type
   const colorClasses = {
-    yellow: "bg-cosmic-yellow before:shadow-cosmic-yellow/40",
-    pink: "bg-cosmic-pink before:shadow-cosmic-pink/40",
-    cyan: "bg-cosmic-cyan before:shadow-cosmic-cyan/40",
+    yellow: "bg-cosmic-yellow star-glow-yellow",
+    pink: "bg-cosmic-pink star-glow-pink",
+    cyan: "bg-cosmic-cyan star-glow-cyan",
+  };
+  
+  const popupClasses = {
+    yellow: "star-popup-yellow",
+    pink: "star-popup-pink",
+    cyan: "star-popup-cyan",
   };
 
   // Prevent popup clicks from closing it
@@ -155,26 +163,23 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
         <div
           onClick={handlePopupClick}
           className={cn(
-            "absolute w-72 md:w-96 bg-muted/90 backdrop-blur-md rounded-lg p-4 shadow-lg",
-            "transform transition-all duration-500 animate-fade-in",
-            isMobile ? "top-8 left-0" : "top-full mt-2 left-1/2 -translate-x-1/2"
+            "absolute w-72 md:w-96 star-popup animate-fade-in",
+            popupClasses[color],
+            isMobile ? "top-8 left-0" : "top-full mt-4 left-1/2 -translate-x-1/2"
           )}
-          style={{
-            boxShadow: `0 4px 20px rgba(${color === 'yellow' ? '254, 240, 138' : 
-              color === 'pink' ? '217, 70, 239' : '14, 165, 233'}, 0.3)`,
-          }}
         >
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
             {isEditing ? (
               <input
                 type="text"
                 value={editableTitle}
                 onChange={(e) => setEditableTitle(e.target.value)}
-                className="text-lg font-bold bg-background/50 border border-primary/30 rounded px-2 py-1 w-full mr-2"
+                className="text-lg font-bold bg-background/30 border border-white/20 rounded px-2 py-1 w-full mr-2 focus:outline-none focus:ring-1 focus:ring-white/30"
                 onClick={(e) => e.stopPropagation()}
+                autoFocus
               />
             ) : (
-              <h3 className="text-lg font-bold">{editableTitle}</h3>
+              <h3 className="text-lg font-bold text-white">{editableTitle}</h3>
             )}
             
             <div className="flex gap-2">
@@ -182,7 +187,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 rounded-full p-0 bg-primary/20 hover:bg-primary/30"
+                  className="h-8 w-8 rounded-full p-0 bg-primary/20 hover:bg-primary/30 text-white"
                   onClick={handleSave}
                 >
                   <Check className="h-4 w-4" />
@@ -191,7 +196,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 rounded-full p-0 bg-muted hover:bg-muted/80"
+                  className="h-8 w-8 rounded-full p-0 bg-white/10 hover:bg-white/20 text-white"
                   onClick={handleEdit}
                 >
                   <Pencil className="h-4 w-4" />
@@ -200,7 +205,7 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 rounded-full p-0"
+                className="h-8 w-8 rounded-full p-0 bg-white/10 hover:bg-white/20 text-white"
                 onClick={handleClose}
               >
                 ×
@@ -212,11 +217,11 @@ const KnowledgeStar: React.FC<KnowledgeStarProps> = ({
             <textarea
               value={editableContent}
               onChange={(e) => setEditableContent(e.target.value)}
-              className="text-sm text-foreground/80 bg-background/50 border border-primary/30 rounded px-2 py-1 w-full min-h-[100px]"
+              className="text-sm bg-background/30 border border-white/20 rounded px-3 py-2 w-full min-h-[120px] focus:outline-none focus:ring-1 focus:ring-white/30 text-white"
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <p className="text-sm text-foreground/80">{editableContent}</p>
+            <p className="text-sm text-white/90 leading-relaxed">{editableContent}</p>
           )}
         </div>
       )}
