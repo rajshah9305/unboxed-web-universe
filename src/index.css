@@ -34,6 +34,22 @@
     --ring: 280 84% 60%;
 
     --radius: 0.5rem;
+
+    /* Cosmic Color Definitions */
+    --cosmic-yellow-rgb: 254, 240, 138;
+    --cosmic-yellow-hsl: 53, 98%, 77%;
+    --cosmic-yellow-glow: hsla(var(--cosmic-yellow-hsl), 0.7);
+    --cosmic-yellow-glow-inner: hsla(var(--cosmic-yellow-hsl), 0.9);
+
+    --cosmic-pink-rgb: 217, 70, 239;
+    --cosmic-pink-hsl: 290, 84%, 61%;
+    --cosmic-pink-glow: hsla(var(--cosmic-pink-hsl), 0.7);
+    --cosmic-pink-glow-inner: hsla(var(--cosmic-pink-hsl), 0.9);
+
+    --cosmic-cyan-rgb: 14, 165, 233;
+    --cosmic-cyan-hsl: 199, 89%, 48%;
+    --cosmic-cyan-glow: hsla(var(--cosmic-cyan-hsl), 0.7);
+    --cosmic-cyan-glow-inner: hsla(var(--cosmic-cyan-hsl), 0.9);
   }
 
   * {
@@ -54,47 +70,65 @@
 @layer components {
   .knowledge-star {
     @apply rounded-full shadow-lg 
-           hover:scale-110 transition-all duration-300 cursor-pointer 
-           shadow-cosmic-yellow/20 hover:shadow-cosmic-pink/30;
+           hover:scale-110 transition-all duration-300 cursor-pointer;
+           /* Base shadow can be removed or kept subtle if pulse-glow is strong */
   }
 
   .star-glow {
-    @apply before:content-[''] before:absolute before:inset-0 
-           before:rounded-full before:shadow-[0_0_15px_3px] 
-           before:animate-pulse-glow;
     position: relative;
-    z-index: 10;
+    z-index: 10; /* Ensure glow is above other elements if needed, but below popup */
+    /* The ::before pseudo-element will create the glow */
   }
 
-  .star-glow-yellow {
-    @apply before:shadow-cosmic-yellow/70;
-  }
-
-  .star-glow-pink {
-    @apply before:shadow-cosmic-pink/70;
-  }
-
-  .star-glow-cyan {
-    @apply before:shadow-cosmic-cyan/70;
+  .star-glow::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit; /* Takes the parent's border-radius */
+    animation: pulse-glow 3s infinite ease-in-out;
+    /* Default shadow, will be overridden by specific color classes */
+    box-shadow: 0 0 15px 5px var(--cosmic-yellow-glow), 0 0 5px 2px var(--cosmic-yellow-glow-inner);
   }
   
-  /* Enhanced popup styling */
-  .star-popup {
-    @apply backdrop-blur-md rounded-lg p-4 transition-all duration-500;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .star-glow-yellow::before {
+    --glow-color: var(--cosmic-yellow-glow);
+    --glow-color-inner: var(--cosmic-yellow-glow-inner);
+    /* box-shadow is set by .star-glow::before using these variables */
+  }
+
+  .star-glow-pink::before {
+    --glow-color: var(--cosmic-pink-glow);
+    --glow-color-inner: var(--cosmic-pink-glow-inner);
+  }
+
+  .star-glow-cyan::before {
+    --glow-color: var(--cosmic-cyan-glow);
+    --glow-color-inner: var(--cosmic-cyan-glow-inner);
+  }
+  
+  /* Card popup styling using CSS variables */
+  .star-popup { /* Base class for card popups */
+    @apply backdrop-blur-md rounded-lg p-0 transition-all duration-500 shadow-2xl; /* p-0 because Card has its own padding */
+    border: 1px solid var(--card-border-color, rgba(255, 255, 255, 0.1));
+    background-color: var(--card-bg-color, rgba(var(--muted-rgb), 0.3)); /* Fallback using muted */
   }
   
   .star-popup-yellow {
-    background: linear-gradient(135deg, rgba(254, 240, 138, 0.2) 0%, rgba(250, 240, 137, 0.1) 100%);
+    --card-border-color: hsla(var(--cosmic-yellow-hsl), 0.5);
+    --card-bg-color: rgba(var(--cosmic-yellow-rgb), 0.15);
   }
   
   .star-popup-pink {
-    background: linear-gradient(135deg, rgba(217, 70, 239, 0.2) 0%, rgba(214, 70, 236, 0.1) 100%);
+    --card-border-color: hsla(var(--cosmic-pink-hsl), 0.5);
+    --card-bg-color: rgba(var(--cosmic-pink-rgb), 0.15);
   }
   
   .star-popup-cyan {
-    background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(14, 160, 230, 0.1) 100%);
+    --card-border-color: hsla(var(--cosmic-cyan-hsl), 0.5);
+    --card-bg-color: rgba(var(--cosmic-cyan-rgb), 0.15);
   }
   
   /* Edit transition */
@@ -163,4 +197,21 @@
   0% { opacity: 0.2; }
   50% { opacity: 1; }
   100% { opacity: 0.2; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes slowFadeInOut {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+/* New pulse-glow animation for stars */
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 12px 3px var(--glow-color), 0 0 4px 1px var(--glow-color-inner); }
+  50% { box-shadow: 0 0 20px 7px var(--glow-color), 0 0 8px 3px var(--glow-color-inner); }
+  100% { box-shadow: 0 0 12px 3px var(--glow-color), 0 0 4px 1px var(--glow-color-inner); }
 }

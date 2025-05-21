@@ -1,6 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { ZoomIn, ZoomOut, RotateCcw } from "lucide-react"; // Import icons
 import KnowledgeStar from "./KnowledgeStar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -153,13 +154,15 @@ const GalaxyViewer = () => {
     const stars = [];
     const starClasses = ["star-tiny", "star-small", "star-medium", "star-large"];
     const starColors = ["bg-white", "bg-yellow-100", "bg-blue-100"];
+    const animationNames = ['twinkle', 'pulse', 'slowFadeInOut']; // Animation options
     
     // Generate 300+ stars for a realistic night sky
     for (let i = 0; i < 300; i++) {
       const size = starClasses[Math.floor(Math.random() * starClasses.length)];
       const color = starColors[Math.floor(Math.random() * starColors.length)];
-      const animationDelay = `${Math.random() * 5}s`;
-      const animationDuration = `${Math.random() * 3 + 2}s`;
+      const animationName = animationNames[Math.floor(Math.random() * animationNames.length)];
+      const animationDelay = `${Math.random() * 10}s`; // Increased delay range
+      const animationDuration = `${Math.random() * 5 + 5}s`; // Increased duration range
       
       stars.push(
         <div
@@ -168,7 +171,7 @@ const GalaxyViewer = () => {
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            animationName: 'twinkle',
+            animationName,
             animationDuration,
             animationDelay,
             animationIterationCount: 'infinite'
@@ -183,7 +186,7 @@ const GalaxyViewer = () => {
   return (
     <KnowledgeStarProvider>
       <div 
-        className="relative h-full w-full overflow-hidden cursor-move bg-[#0a0d1f]"
+        className="relative h-full w-full overflow-hidden cursor-move bg-cosmic-dark-blue"
         ref={galaxyRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -204,31 +207,39 @@ const GalaxyViewer = () => {
             translateY: position.y,
           }}
         >
-          {/* Distant nebula effect */}
-          <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-purple-900/10 blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full bg-blue-900/10 blur-3xl"></div>
+          {/* Distant nebula effect with framer-motion */}
+          <motion.div
+            className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-purple-900/5 blur-3xl"
+            animate={{ opacity: [0.03, 0.05, 0.03] }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full bg-blue-900/5 blur-3xl"
+            animate={{ opacity: [0.02, 0.04, 0.02] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear", delay: 5 }}
+          />
           
           {/* Constellation lines */}
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Primary constellation */}
             <path 
               d="M20,15 L68,28 L25,75 L82,42 L68,28" 
-              stroke="rgba(255, 255, 255, 0.15)" 
-              strokeWidth="0.15" 
+              stroke="rgba(255, 255, 255, 0.08)" 
+              strokeWidth="0.1" 
               fill="none"
             />
             {/* Secondary constellation */}
             <path 
               d="M20,15 L15,82 L82,42 L20,15" 
-              stroke="rgba(255, 255, 255, 0.1)" 
-              strokeWidth="0.15" 
+              stroke="rgba(255, 255, 255, 0.06)" 
+              strokeWidth="0.1" 
               fill="none"
             />
             {/* Tertiary constellation */}
             <path 
               d="M85,15 L68,28 L85,85 L25,75" 
-              stroke="rgba(255, 255, 255, 0.08)" 
-              strokeWidth="0.15" 
+              stroke="rgba(255, 255, 255, 0.05)" 
+              strokeWidth="0.1" 
               fill="none"
             />
           </svg>
@@ -247,10 +258,22 @@ const GalaxyViewer = () => {
             />
           ))}
           
-          {/* Dust clouds for nebula effect */}
-          <div className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-purple-500/5 blur-3xl"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-blue-500/5 blur-3xl"></div>
-          <div className="absolute top-2/3 left-2/3 w-40 h-40 rounded-full bg-pink-500/5 blur-3xl"></div>
+          {/* Dust clouds for nebula effect with framer-motion */}
+          <motion.div
+            className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-purple-500/3 blur-3xl"
+            animate={{ opacity: [0.01, 0.03, 0.01], scale: [1, 1.05, 1] }}
+            transition={{ duration: 35, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          />
+          <motion.div
+            className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-blue-500/3 blur-3xl"
+            animate={{ opacity: [0.02, 0.04, 0.02], scale: [1, 1.03, 1] }}
+            transition={{ duration: 40, repeat: Infinity, ease: "easeInOut", delay: 7 }}
+          />
+          <motion.div
+            className="absolute top-2/3 left-2/3 w-40 h-40 rounded-full bg-pink-500/3 blur-3xl"
+            animate={{ opacity: [0.01, 0.03, 0.01], scale: [1, 1.04, 1] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+          />
         </motion.div>
         
         {/* Controls */}
@@ -259,25 +282,28 @@ const GalaxyViewer = () => {
             onClick={() => handleZoom(true)}
             variant="outline"
             size="icon"
-            className="bg-muted/20 backdrop-blur-sm border-white/10 hover:bg-muted/40 transition-colors text-white"
+            className="p-2 bg-muted/30 backdrop-blur-sm border-cosmic-cyan/50 hover:bg-muted/50 transition-colors text-cosmic-cyan"
+            aria-label="Zoom In"
           >
-            +
+            <ZoomIn size={20} />
           </Button>
           <Button
             onClick={() => handleZoom(false)}
             variant="outline"
             size="icon"
-            className="bg-muted/20 backdrop-blur-sm border-white/10 hover:bg-muted/40 transition-colors text-white"
+            className="p-2 bg-muted/30 backdrop-blur-sm border-cosmic-cyan/50 hover:bg-muted/50 transition-colors text-cosmic-cyan"
+            aria-label="Zoom Out"
           >
-            -
+            <ZoomOut size={20} />
           </Button>
           <Button
             onClick={resetView}
             variant="outline"
             size="icon"
-            className="bg-muted/20 backdrop-blur-sm border-white/10 hover:bg-muted/40 transition-colors text-white"
+            className="p-2 bg-muted/30 backdrop-blur-sm border-cosmic-pink/50 hover:bg-muted/50 transition-colors text-cosmic-pink"
+            aria-label="Reset View"
           >
-            ↺
+            <RotateCcw size={20} />
           </Button>
         </div>
       </div>
